@@ -1,0 +1,109 @@
+body {
+	background: url(../src/bg.png) repeat;
+	font-family:Tahoma,Arial,"Helvetica Neue","Hiragino Sans GB",Simsun,sans-self;
+}
+/*左侧导航栏start*/
+.nav {
+	width: 200px;
+	float: left;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	background-color: #1e7de8;
+}
+.nav h1 {
+	height: 40px;
+	line-height: 40px;
+	font-size: 18px;
+	color: #fff;
+	font-weight: bold;
+	text-align: center;
+	background-color: #164784;
+}
+#add-album {
+	width: 70%;
+	height: 36px;
+	margin: 40px 30px;
+	background-color: #f7ae12;
+	text-align: center;
+	color: #fff;
+	outline: none;
+	border: 1px solid #f7ae12;
+	border-radius: 5px;
+}
+#albums {
+	margin-top: 50px;
+}
+#albums li {
+	position: relative;
+	height: 36px;
+	padding: 3px 0 3px 36px;
+	margin-top: 3px;
+	color: #e6e6e6;
+	font-size: 14px;
+	line-height: 36px;
+	background-color: #5192db;
+	cursor: pointer;
+}
+#albums .active {
+	background-color: #63baf2;
+	border-left: 5px solid #f7ae12;
+}
+.active img {
+	position: absolute;
+	right: 20px;
+	top: 2px;
+}
+/*左侧导航栏end*/
+/*右侧内容区start*/
+.content {
+	margin-left: 200px;
+	padding-left: 50px;
+}
+#up-img {
+	position: relative;
+	height: 80px;
+}
+#up-btn {
+	position: absolute;
+	top: 20px;
+	right: 40px;
+	width: 200px;
+	height: 40px;
+	background-color: #f7ae12; 
+	text-align: center;
+	color: #fff;
+	outline: none;
+	border: 1px solid #f7ae12;
+	border-radius: 5px;
+}
+.img-box {
+	display: inline-block;
+	position: relative;
+	width: 300px;
+	height: 200px;
+	margin-right: 10px;
+	margin-bottom: 20px;
+	background-color: #fff;
+}
+.img-box img {
+	width: 95%;
+	height: 166px;
+	display: block;
+	margin: 8px auto;
+}
+.item-name {
+	display: inline-block;
+	margin-left: 7.5px;
+	width: 100px;
+	overflow: hidden;
+} 
+.img-box .edit-items {
+	margin: 0;
+	position: absolute;
+	right: 7.5px;
+	bottom: 3px;
+	width: 30px;
+	height: 15px;
+	cursor: pointer;
+}
