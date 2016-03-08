@@ -14,10 +14,10 @@ function ajax(url,options){
 
     xhr.open(method,url,true);
     if( options.data ) {
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=utf-8")
-        console.log(options.data);
+        if(method === "POST"){
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+        }
         xhr.send(options.data);
-
     }else {
     	xhr.send();
     }

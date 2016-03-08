@@ -31,6 +31,51 @@ body {
 	border: 1px solid #f7ae12;
 	border-radius: 5px;
 	cursor: pointer;
+	display: none;
+}
+#add-box {
+	position: relative;
+	display: none;
+	width: 198px;
+	height: 170px;
+	top: 30px;
+	border: 1px solid #b3a5b9;
+	border-radius: 5px;
+	background-color: #79e2c0;
+}
+.add-in {
+	width: 198px;
+	height: 40px;
+	border-bottom: 1px solid;
+	border-top: 1px solid;
+	color: #e6e6e6;
+	margin-bottom: 10px;
+}
+.add-head {
+	height: 30px;
+	color: #e6e6e6;
+	font-size: 18px;
+	font-weight: bold;
+	text-align: center;
+}
+#add-box input {
+	width: 112px;
+	height: 40px;
+	border: none;
+	background-color: #79e2c0;
+}
+#add-box #com_btn {
+	position: absolute;
+	width: 60px;
+	height: 36px;
+	right: 10px;
+	bottom: 10px;
+	padding: 3px;
+	text-align: center;
+}
+.nav#overfly {
+	background-color: #000;
+	opacity: 0.7;
 }
 /*添加相册时的编辑框*/
 #abm-input {

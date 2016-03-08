@@ -8,6 +8,7 @@
 
 	if($query = mysqli_query($con,"SELECT * FROM album")) {
 		//printf(mysqli_num_rows($query));
+		$list = array();
 		while($row=mysqli_fetch_array($query)){
 			$tmp = array(
 				'id' =>$row['id'],
@@ -16,7 +17,9 @@
 			);	
 			$list[]=json_encode($tmp);
 		}
-		echo json_encode($list);
+		if($list) {
+			echo json_encode($list);
+		} 
 	}
 
 	mysqli_close($con);
