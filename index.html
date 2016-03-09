@@ -13,19 +13,12 @@
 			<button id="add-album">添加相册</button>
 			<div id="add-box">
 				<div class="add-head">新建相册</div>
-				<div class="add-in">
-					<span>相册名字：</span>
-					<input id="album_name" type="text">
-				</div>
-				<div class="add-in">
-					<span>访问密码：</span>
-					<input id="password"  type="text">
-				</div>
-				<input id="com_btn" type="button" value="确定">
+				<input id="album-name" type="text" placeholder="在这里输入相册名字">
+				<input id="password"  type="password" placeholder="在这里输入访问密码">
+				<input id="com-btn" type="button" value="确定">
 			</div>
 			<ul id="albums">
-				<li>全部&nbsp;&nbsp;(<span class="num">&nbsp;1999&nbsp;</span>)</li>
-
+				<li>全部&nbsp;&nbsp;(<span id="all-num" class="num"></span>)</li>
 				<li class="active">NBA&nbsp;&nbsp;(<span class="num">&nbsp;232&nbsp;</span>)<img src="src/pen.png"></li>
 			</ul>
 		</div>

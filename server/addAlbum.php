@@ -1,7 +1,4 @@
 <?php
-	define('NAME_NULL','NAME_NULL');
-	define('DISTINCT_NAME','DISTINCT_NAME');
-
 	$con = new mysqli("localhost","root","123456","photo_manage");
 
 	if (mysqli_connect_errno()) {
@@ -10,22 +7,28 @@
 	}
 	mysqli_query($con,"SET NAMES UTF8");  //声明使用utf-8
 	$album_name = $_POST['album'];
+	$album_pwd = $_POST['pwd'];
+
 	if( $album_name == "") {
-		printf("NAME_NULL");
+		echo ("NAME_NULL");
 		exit();
 	}
-	$query = mysqli_query($con,"SELECT 'id' FROM album");
+	$query = mysqli_query($con,"SELECT * FROM album");
 	
 	while($row=mysqli_fetch_array($query)){
 		if($album_name == $row['name']) {
-			printf("DISTINCT_NAME");
+			echo ("DISTINCT_NAME");
 			exit();
 		}
 	}
 
+	echo ("INPUT_OK");
+
 	$album_id = mysqli_num_rows($query);    //id即为元组的数目
-	$sql = "INSERT INTO album(id, name, num) VALUES ('$album_id','$album_name','0')";
+	$sql = "INSERT INTO album(id, name, pwd, num) VALUES ('$album_id','$album_name','$album_pwd','0')";
 	mysqli_query($con,$sql);
+
+
 
 	mysqli_close($con);
 ?>
