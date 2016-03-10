@@ -28,7 +28,5 @@
 	$sql = "INSERT INTO album(id, name, pwd, num) VALUES ('$album_id','$album_name','$album_pwd','0')";
 	mysqli_query($con,$sql);
 
-
-
 	mysqli_close($con);
 ?>

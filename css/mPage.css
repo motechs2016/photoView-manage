@@ -1,6 +1,6 @@
 body {
 	background: url(../src/bg.png) repeat;
-	font-family:Tahoma,Arial,"Helvetica Neue","Hiragino Sans GB",Simsun,sans-self;
+	font-family: Geneva,Arial,Helvetica,sans-serif;
 }
 /*左侧导航栏start*/
 .nav {
@@ -9,6 +9,7 @@ body {
 	position: absolute;
 	top: 0;
 	bottom: 0;
+	overflow: auto;
 	background-color: #1e7de8;
 }
 .nav h1 {
@@ -36,7 +37,7 @@ body {
 	position: relative;
 	display: none;
 	width: 198px;
-	height: 170px;
+	height: 210px;
 	top: 30px;
 	border: 1px solid #b3a5b9;
 	border-radius: 5px;
@@ -50,7 +51,7 @@ body {
 	color: #e6e6e6;
 	margin-bottom: 10px;
 }
-.add-head {
+#add-head {
 	height: 30px;
 	color: #e6e6e6;
 	font-size: 18px;
@@ -58,20 +59,41 @@ body {
 	text-align: center;
 }
 #add-box input {
-	width: 168px;
+	width: 166px;
 	height: 40px;
 	border: none;
 	background-color: #fff;
 	padding-left: 30px;
-	border-bottom: 1px solid #fff;
+	border: 1px solid #fff;
 	margin-bottom: 5px;
+}
+#new-pwd {
+	display: none;
+}
+#add-box a {
+	display: none;
+	color: red;
+	margin-left: 10px;
 }
 #add-box #com-btn {
 	position: absolute;
 	width: 60px;
 	height: 26px;
 	right: 10px;
-	bottom: 10px;
+	bottom: 6px;
+	padding: 3px;
+	text-align: center;
+	border: 1px solid #fff;
+	outline: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+#add-box #cancel-btn {
+	position: absolute;
+	width: 60px;
+	height: 26px;
+	right: 90px;
+	bottom: 6px;
 	padding: 3px;
 	text-align: center;
 	border: 1px solid #fff;
@@ -116,6 +138,10 @@ body {
 /*右侧内容区start*/
 .content {
 	margin-left: 200px;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	overflow: auto;
 }
 #up-img {
 	position: relative;
@@ -169,5 +195,98 @@ body {
 	bottom: 3px;
 	width: 30px;
 	height: 15px;
+	cursor: pointer;
+}
+#del-div {
+	animation: myfirst 1s linear forwards;
+	/* Firefox: */
+	-moz-animation: myfirst 1s linear forwards;
+	/* Safari 和 Chrome: */
+	-webkit-animation: myfirst 1s linear forwards;
+	/* Opera: */
+	-o-animation: myfirst 1s linear forwards;
+	position: relative;
+	display: none;
+	width: 500px;
+	height: 200px;
+	border: 1px solid #f8f784;
+	outline: none;
+	border-radius: 10px;
+	background-color: #f8f784;
+	text-align: center;
+	margin-bottom: 30px;
+}
+@keyframes myfirst
+{
+	0%   {left:0px; top:0px;}
+	25%  {left:70px; top:0px;}
+	50%  {left:140px; top:0px;}
+	75%  {left:210px; top:0px;}
+	100% {left:280px; top:0px;}
+}
+
+@-moz-keyframes myfirst /* Firefox */
+{
+	0%   {left:0px; top:0px;}
+	25%  {left:60px; top:0px;}
+	50%  {left:120px; top:0px;}
+	75%  {left:180px; top:0px;}
+	100% {left:240px; top:0px;}
+}
+
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+	0%   {left:0px; top:0px;}
+	25%  {left:70px; top:0px;}
+	50%  {left:140px; top:0px;}
+	75%  {left:210px; top:0px;}
+	100% {left:280px; top:0px;}
+}
+
+@-o-keyframes myfirst /* Opera */
+{
+	0%   {left:0px; top:0px;}
+	25%  {left:70px; top:0px;}
+	50%  {left:140px; top:0px;}
+	75%  {left:210px; top:0px;}
+	100% {left:280px; top:0px;}
+}
+
+.div-head {
+	height: 30px;
+	line-height: 30px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #fff;
+	text-align: center;
+	background-color: #f7ae12;
+	margin-bottom: 20px;
+}
+#del-pwd {
+	display: inline-block;
+	width: 70%;
+	height: 36px;
+	padding-left: 30px;
+	margin-top: 30px;
+	border: 1px solid #fff;
+}
+#del-cancel {
+	position: absolute;
+	width: 80px;
+	height: 30px;
+	right: 130px;
+	bottom: 20px;
+	border: 1px solid #fff;
+	border-radius: 5px;
+	cursor: pointer;
+}
+#del-btn {
+	position: absolute;
+	width: 80px;
+	height: 30px;
+	right: 30px;
+	bottom: 20px;
+	border: 1px solid #fff;
+	border-radius: 5px;
 	cursor: pointer;
 }

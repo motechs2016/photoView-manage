@@ -32,7 +32,6 @@ function ajax(url,options){
 
 // 为element增加一个样式名为newClassName的新样式
 function addClass(element, newClassName) {
-    // your implement
     try{
         element.classList.add(newClassName);
     }catch(ex){
@@ -43,13 +42,17 @@ function addClass(element, newClassName) {
 
 // 移除element中的样式oldClassName
 function removeClass(element, oldClassName) {
-    // your implement
     try{
         element.classList.remove(oldClassName);  //html5中新增的，classList属性，只有chrome和firefox3.6支持
     }catch(ex){
         var re = RegExp("\\b"+oldClassName+"\\b");
         element.className = lement.className.replace(re,"");
     }
+}
+
+// 对字符串头尾进行空格字符的去除、包括全角半角空格、Tab等，返回一个字符串
+function trim(str) {
+    return str.replace(/^\s*\t*\r*\n*|\s*\t*\r*\n*$/,'');
 }
 
 var EventUtil={

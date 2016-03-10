@@ -1,21 +1,23 @@
 window.onload = function() {
     getToken();
+
 }
 
 function getToken() {
+    var album_name = window.location.hash.slice(1);
     $.ajax({
         url: '../server/upToken.php',
         success: function (data) {
             var re = /"(\S*)"/;
             if(re.test(data)) {
             	var new_token = RegExp.$1;
-            	creatUploader(new_token);
+            	creatUploader(new_token,album_name);
             }            
         }
     });
 }
 
-function creatUploader(qiniu_token){
+function creatUploader(qiniu_token,album_name){
     var $wrap = $('#uploader'),
 
     // 图片容器
@@ -181,7 +183,14 @@ function creatUploader(qiniu_token){
         });
 
         uploader.on('uploadSuccess',function( file,response ) {
-            console.log(response.hash);
+            var base = "http://7xrbxc.com1.z0.glb.clouddn.com/";
+            console.log(base+response.hash,album_name);
+            var src = encodeURI(base+response.hash);
+            ajax("../../server/upPhotos.php",{
+                "type": "POST",
+                "data": "name="+album_name+"&src="+src,
+                "onsuccess": showPhotos
+            });
         })
         // 拖拽时不接受 js, txt 文件。
         uploader.on( 'dndAccept', function( items ) {
