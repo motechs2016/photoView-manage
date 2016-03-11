@@ -184,14 +184,18 @@ function creatUploader(qiniu_token,album_name){
 
         uploader.on('uploadSuccess',function( file,response ) {
             var base = "http://7xrbxc.com1.z0.glb.clouddn.com/";
-            console.log(base+response.hash,album_name);
-            var src = encodeURI(base+response.hash);
+            var src = base+response.hash;
+            console.log("album_name="+album_name+"&src="+src);
+            
+            //var src = encodeURI(base+response.hash);
             ajax("../../server/upPhotos.php",{
                 "type": "POST",
-                "data": "name="+album_name+"&src="+src,
-                "onsuccess": showPhotos
+                "data": "album_name="+album_name+"&src="+src,
+                onsuccess: function(xhr) {
+                    console.log(xhr.responseText);
+                }
             });
-        })
+        });
         // 拖拽时不接受 js, txt 文件。
         uploader.on( 'dndAccept', function( items ) {
             var denied = false,

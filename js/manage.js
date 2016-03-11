@@ -1,4 +1,8 @@
 window.onload = function() {
+    var content_width = window.innerWidth;
+    var content = document.getElementsByClassName("content")[0];
+    content.style.width = (content_width-200)+"px";
+
 	getAlbums();
     addAlbum();
 }
@@ -183,7 +187,6 @@ function editAlbum() {
 }
 
 function updateAlbum(album) {
-    console.log(album.pri_pwd);
     ajax("../server/updateAlbum.php",{
         "type": 'POST',
         "data": "pri_name="+album.pri_name+"&new_name="+album.new_name+
@@ -229,7 +232,7 @@ function delAlbum() {
     })
 }
 
-function showPhotos() {
+function showPhotos(xhr) {
     var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
     if( re.test(this.innerHTML) ) {
         var pri_name = RegExp.$1;
@@ -240,9 +243,26 @@ function showPhotos() {
     }
 
     ajax("../server/getPhotos.php",{
+        "type": "POST",
         "data": "name="+pri_name,
         onsuccess: function(xhr) {
-            console.log(xhr.responseText);
+            if(xhr.responseText) {
+                var recive = JSON.parse(xhr.responseText);
+                var img_show = document.getElementById("img-show");
+                img_show.innerHTML = "";
+                for( var i=0;i<recive.length;i++ ) {
+                    var tmp = JSON.parse(recive[i]);
+                    var photo_num = tmp.num;
+                    var img_box = document.createElement("div");
+                    img_box.className = "img-box";
+                    img_box.innerHTML = "<img src="+tmp.src+">"+"<span class=\"item-name\">"+tmp.name+"</span>"
+                                        +"<img class=\"edit-items\" src=\"../src/ellips.png\">";
+                    img_show.appendChild(img_box);
+                }
+                if(photo_num) {
+                    num_span.innerHTML = "&nbsp;"+photo_num+"&nbsp;";
+                }
+            }
         }
-    })
+    });
 }

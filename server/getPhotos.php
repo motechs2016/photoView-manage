@@ -10,6 +10,7 @@
 	$album_query = mysqli_query($con,"SELECT * FROM album WHERE name = '$album_name'");
 	$album_row = mysqli_fetch_array($album_query);
 	$album_id = $album_row['id'];
+	$album_num = $album_row['num'];
 
 	if($query = mysqli_query($con,"SELECT * FROM photo WHERE album = '$album_id'")) {
 		$list = array();
@@ -17,6 +18,7 @@
 			$tmp = array(
 				'src' =>$row['src'],
 				'name' =>$row['name'],
+				'num' =>$album_num,
 			);	
 			$list[]=json_encode($tmp);
 		}
