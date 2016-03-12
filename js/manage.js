@@ -2,11 +2,14 @@ window.onload = function() {
     var content_width = window.innerWidth;
     var content = document.getElementsByClassName("content")[0];
     content.style.width = (content_width-200)+"px";
-
-	getAlbums();
+    getAlbums();
     addAlbum();
+	
+    
 }
-
+/*
+ *重置相册导航的样式
+ */
 function reset() {
     var album_name = document.getElementById("album-name");
     album_name.value="";
@@ -23,7 +26,6 @@ function reset() {
  */
 function getAlbums(xr) {
     if(xr) {
-        console.log(xr.responseText);
         var album_name = document.getElementById("album-name");
         var password = document.getElementById("password");
         if( xr.responseText === "NAME_NULL" ) {           //后台传回"NAME_NULL"表示没有填写相册名字
@@ -64,10 +66,10 @@ function getAlbums(xr) {
                 }
             }
             document.getElementById("all-num").innerHTML = "&nbsp;"+all_num+"&nbsp;";
+            showPhotos("ALL");
             albumDeal();   //必须在相册信息拉取完之后才能执行albumDeal
         }
-    });
-    
+    });  
 }
 
 /*
@@ -229,17 +231,29 @@ function delAlbum() {
     });
     EventUtil.addHandler(del_cancel,"click",function() {
         del_div.style.display = "none";
-    })
+    });
 }
 
-function showPhotos(xhr) {
-    var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
-    if( re.test(this.innerHTML) ) {
-        var pri_name = RegExp.$1;
+function showPhotos(name) {
+    var last_album = document.getElementsByClassName("album_bg")[0];
+    if(last_album) {
+        removeClass(last_album,"album_bg");
     }
-    var up_btn = document.getElementById("up-btn");
-    if(up_btn) {
-        up_btn.href = encodeURI("upload.html#"+pri_name);       
+    if(name === "ALL") {
+        var pri_name = "ALL";
+        var albums = document.getElementById("albums");
+        addClass(albums.getElementsByTagName("li")[0],"album_bg");
+    }else {
+        var this_album = this;
+        addClass(this_album,"album_bg");
+        var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
+        if( re.test(this.innerHTML) ) {
+            var pri_name = RegExp.$1;
+        }
+        var up_btn = document.getElementById("up-btn");
+        if(up_btn) {
+            up_btn.href = encodeURI("upload.html#"+pri_name);       
+        }
     }
 
     ajax("../server/getPhotos.php",{
@@ -252,15 +266,11 @@ function showPhotos(xhr) {
                 img_show.innerHTML = "";
                 for( var i=0;i<recive.length;i++ ) {
                     var tmp = JSON.parse(recive[i]);
-                    var photo_num = tmp.num;
                     var img_box = document.createElement("div");
                     img_box.className = "img-box";
                     img_box.innerHTML = "<img src="+tmp.src+">"+"<span class=\"item-name\">"+tmp.name+"</span>"
                                         +"<img class=\"edit-items\" src=\"../src/ellips.png\">";
                     img_show.appendChild(img_box);
-                }
-                if(photo_num) {
-                    num_span.innerHTML = "&nbsp;"+photo_num+"&nbsp;";
                 }
             }
         }

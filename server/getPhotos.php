@@ -7,24 +7,38 @@
 	}
 
 	$album_name = $_POST['name'];
-	$album_query = mysqli_query($con,"SELECT * FROM album WHERE name = '$album_name'");
-	$album_row = mysqli_fetch_array($album_query);
-	$album_id = $album_row['id'];
-	$album_num = $album_row['num'];
-
-	if($query = mysqli_query($con,"SELECT * FROM photo WHERE album = '$album_id'")) {
-		$list = array();
-		while($row=mysqli_fetch_array($query)){
-			$tmp = array(
-				'src' =>$row['src'],
-				'name' =>$row['name'],
-				'num' =>$album_num,
-			);	
-			$list[]=json_encode($tmp);
+	if( $album_name == "ALL") {           //如果要取出所有图片
+		$photo_query = mysqli_query($con,"SELECT * FROM photo");
+		$all_list = array();
+		while($all_row = mysqli_fetch_array($photo_query)) {
+			$all_tmp = array(
+				'src' =>$all_row['src'],
+				'name' =>$all_row['name'],
+			);
+			$all_list[]=json_encode($all_tmp);
 		}
-		if($list) {
-			echo json_encode($list);
-		} 
+		if($all_list) {
+			echo json_encode($all_list);
+		}
+	}else {
+		$album_query = mysqli_query($con,"SELECT * FROM album WHERE name = '$album_name'");
+		$album_row = mysqli_fetch_array($album_query);
+		$album_id = $album_row['id'];
+		$album_num = $album_row['num'];
+
+		if($query = mysqli_query($con,"SELECT * FROM photo WHERE album = '$album_id'")) {
+			$list = array();
+			while($row=mysqli_fetch_array($query)){
+				$tmp = array(
+					'src' =>$row['src'],
+					'name' =>$row['name'],
+				);	
+				$list[]=json_encode($tmp);
+			}
+			if($list) {
+				echo json_encode($list);
+			} 
+		}
 	}
 	mysqli_close($con);
 ?>

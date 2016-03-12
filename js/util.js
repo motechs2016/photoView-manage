@@ -46,7 +46,8 @@ function removeClass(element, oldClassName) {
         element.classList.remove(oldClassName);  //html5中新增的，classList属性，只有chrome和firefox3.6支持
     }catch(ex){
         var re = RegExp("\\b"+oldClassName+"\\b");
-        element.className = lement.className.replace(re,"");
+        console.log(element);
+        element.className = element.className.replace(re,"");
     }
 }
 

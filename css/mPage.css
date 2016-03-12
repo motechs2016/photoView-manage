@@ -115,6 +115,9 @@ body {
 	background-color: #5192db;
 	cursor: pointer;
 }
+#albums .album_bg {
+	background-color: #34fa71;
+}
 #albums .active {
 	background-color: #63baf2;
 	border-left: 5px solid #f7ae12;
