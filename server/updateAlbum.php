@@ -28,6 +28,10 @@
 	}else if($type == "delete") {
 		echo ("INPUT_OK");
 		$name = $pri_row['name'];
+		$del_album = mysqli_query($con,"SELECT id FROM album WHERE name = '$name'");
+		$del_row = mysqli_fetch_array($del_album);
+		$del_id = $del_row['id'];
+		mysqli_query($con,"DELETE FROM photo WHERE album = '$del_id'");
 		$sql_del = "DELETE FROM `album` WHERE name = '$name' ";
 		mysqli_query($con,$sql_del);
 	}else {

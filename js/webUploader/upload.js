@@ -1,23 +1,18 @@
-window.onload = function() {
-    getToken();
-
-}
-
-function getToken() {
-    var album_name = window.location.hash.slice(1);
+function getToken(this_album) {
     $.ajax({
         url: '../server/upToken.php',
         success: function (data) {
             var re = /"(\S*)"/;
             if(re.test(data)) {
             	var new_token = RegExp.$1;
-            	creatUploader(new_token,album_name);
+                console.log("token:"+this_album.name);
+            	creatUploader(new_token,this_album);
             }            
         }
     });
 }
 
-function creatUploader(qiniu_token,album_name){
+function creatUploader(qiniu_token,this_album){
     var $wrap = $('#uploader'),
 
     // 图片容器
@@ -181,21 +176,38 @@ function creatUploader(qiniu_token,album_name){
             fileSizeLimit: 200 * 1024 * 1024,    // 200 M
             fileSingleSizeLimit: 50 * 1024 * 1024    // 50 M
         });
-
+        var src = [];
         uploader.on('uploadSuccess',function( file,response ) {
             var base = "http://7xrbxc.com1.z0.glb.clouddn.com/";
-            var src = base+response.hash;
-            console.log("album_name="+album_name+"&src="+src);
-            
-            //var src = encodeURI(base+response.hash);
-            ajax("../../server/upPhotos.php",{
-                "type": "POST",
-                "data": "album_name="+album_name+"&src="+src,
-                onsuccess: function(xhr) {
-                    console.log(xhr.responseText);
+            src.push(base+response.hash);
+        });
+        uploader.on('uploadFinished',function() {
+            $.ajax({
+                url: "../../server/upPhotos.php",
+                type: "POST",
+                data: "album_name="+this_album.name+"&src="+src,
+                success: function(data) {
+                    var recive = JSON.parse(data);
+                    document.getElementById("wrapper").style.display = "none";
+                    for(var i=0;i<recive.length;i++) {
+                        var tmp = JSON.parse(recive[i]);
+                        var img_box = document.createElement("div");
+                        img_box.className = "img-box";
+                        img_box.innerHTML = "<img src="+tmp.src+">"+"<span class=\"item-name\">"+tmp.name+"</span>"
+                                            +"<img class=\"edit-items\" src=\"../src/ellips.png\">";
+                        document.getElementById("img-show").appendChild(img_box);
+                    }
+                    var this_container = this_album.container;
+                    var this_num = this_container.getElementsByClassName("num")[0];
+                    num = this_num.innerHTML.replace(/\&nbsp\;/g,'');
+                    this_num.innerHTML = "&nbsp;"+(parseInt(num)+recive.length)+"&nbsp;";
+                    all_num = document.getElementById("all-num");
+                    num_all = all_num.innerHTML.replace(/\&nbsp\;/g,'');
+                    all_num.innerHTML = "&nbsp;"+(parseInt(num_all)+recive.length)+"&nbsp;"; 
+
                 }
             });
-        });
+        })
         // 拖拽时不接受 js, txt 文件。
         uploader.on( 'dndAccept', function( items ) {
             var denied = false,

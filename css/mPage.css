@@ -116,7 +116,8 @@ body {
 	cursor: pointer;
 }
 #albums .album_bg {
-	background-color: #34fa71;
+	background-color: #3fedf8;
+	color: #56937e;
 }
 #albums .active {
 	background-color: #63baf2;
@@ -145,10 +146,12 @@ body {
 	top: 0;
 	bottom: 0;
 	overflow: auto;
+	padding: 20px;
 }
 #up-img {
 	position: relative;
 	height: 80px;
+	display: none;
 }
 #up-btn {
 	position: absolute;
@@ -200,6 +203,39 @@ body {
 	height: 15px;
 	cursor: pointer;
 }
+/*图片操作start*/
+#img-deal {
+	width: 130px;
+	height: 90px;
+	display: none;
+	background-color: #63baf2;
+	z-index: 1;
+	position: absolute;
+	left: 162px;
+	top: 174px;
+	padding-top: 10px;
+	text-align: center;
+}
+#img-deal li {
+	height: 23px;
+	cursor: pointer;
+	padding-left: 20px;
+	margin: 4px 0;
+}
+#img-deal .active {
+	background-color: #3fedf8;
+	border-left: 3px solid #f7ae12;
+}
+#img-edit {
+	background: url(../src/mini_pen.png) 36px center no-repeat;
+}
+#img-move {
+	background: url(../src/move.png) 36px center no-repeat;
+}
+#img-del {
+	background: url(../src/mini_del.png) 36px center no-repeat;
+}
+/*图片操作end*/
 #del-div {
 	animation: myfirst 1s linear forwards;
 	/* Firefox: */

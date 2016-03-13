@@ -8,6 +8,8 @@
 
 	$photo_src = $_POST['src'];
 	$album_name = $_POST['album_name'];
+
+	$photo_src = explode(",",$photo_src);
 	
 	$album_query = mysqli_query($con,"SELECT * FROM album WHERE name = '$album_name'");
 	$album_row = mysqli_fetch_array($album_query);
@@ -20,13 +22,27 @@
 	}else {
 		$new_id = 0;
 	}
-	$new_name = $album_name."".$new_id;
-	$up_sql = "INSERT INTO photo(id,album,name,src) VALUES ('$new_id','$album_id','$new_name','$photo_src')";
-	mysqli_query($con,$up_sql);
 
-	$new_num = $album_num+1;
+	for($i=0;$i<count($photo_src);$i++) {
+		//$new_name = $album_name."".$new_id;
+		$new_name = $album_name;
+		$up_sql = "INSERT INTO photo(id,album,name,src) VALUES ('$new_id','$album_id','$new_name','$photo_src[$i]')";
+		mysqli_query($con,$up_sql);
+		$new_id++;
+
+		$tmp = array(
+			'src' =>$photo_src[$i],
+			'name' =>$new_name,
+		);
+		$list[]=json_encode($tmp);
+	}
+
+	$new_num = $album_num+count($photo_src);
 	$update_sql = "UPDATE album SET num='$new_num' WHERE id='$album_id'";
 	mysqli_query($con,$update_sql);
 	
+	if($list) {
+		echo json_encode($list);
+	} 
 	mysqli_close($con);
 ?>

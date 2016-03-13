@@ -6,7 +6,7 @@
 		exit();
 	}
 
-	if($query = mysqli_query($con,"SELECT * FROM album")) {
+	if($query = mysqli_query($con,"SELECT * FROM album ORDER BY ABS(id)")) {
 		//printf(mysqli_num_rows($query));
 		$list = array();
 		while($row=mysqli_fetch_array($query)){

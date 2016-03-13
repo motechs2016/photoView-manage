@@ -3,9 +3,7 @@ window.onload = function() {
     var content = document.getElementsByClassName("content")[0];
     content.style.width = (content_width-200)+"px";
     getAlbums();
-    addAlbum();
-	
-    
+    addAlbum();   
 }
 /*
  *重置相册导航的样式
@@ -55,15 +53,18 @@ function getAlbums(xr) {
             albums_ul.innerHTML = "<li>全部&nbsp;&nbsp;(<span id=\"all-num\" class=\"num\"></span>)</li>"
             var all_num = 0;
             if(xhr.responseText) {
+                var fragment = document.createDocumentFragment();
                 var recive = JSON.parse(xhr.responseText);
                 for( var i=0;i<recive.length;i++ ) {
                     var tmp =  JSON.parse(recive[i]);
                     var album_li = document.createElement("li");
                     all_num += parseInt(tmp.num);
+
                     album_li.innerHTML = tmp.name+"&nbsp;&nbsp;(<span class=\"num\">&nbsp;"+tmp.num+"&nbsp;</span>)<img class=\"edit-btn\" src=\"../src/pen.png\"><img class=\"del-btn\" src=\"../src/del.png\">";
                     EventUtil.addHandler(album_li,"click",showPhotos);
-                    albums_ul.appendChild(album_li);
+                    fragment.appendChild(album_li);
                 }
+                albums_ul.appendChild(fragment);
             }
             document.getElementById("all-num").innerHTML = "&nbsp;"+all_num+"&nbsp;";
             showPhotos("ALL");
@@ -177,24 +178,14 @@ function editAlbum() {
         change_link.style.display = "none";
     });
     EventUtil.addHandler(com_btn,"click",function() {
-        var album = {
-            "pri_name": pri_name,
-            "new_name": album_name.value,
-            "pri_pwd": document.getElementById("password").value,
-            "new_pwd": new_pwd.value
-        };
         change_link.style.display = "none";
-        updateAlbum(album);
+        ajax("../server/updateAlbum.php",{
+            "type": 'POST',
+            "data": "pri_name="+pri_name+"&new_name="+album_name.value+"&pri_pwd="
+            +document.getElementById("password").value+"&new_pwd="+new_pwd.value,
+            "onsuccess": getAlbums
+        });
     });
-}
-
-function updateAlbum(album) {
-    ajax("../server/updateAlbum.php",{
-        "type": 'POST',
-        "data": "pri_name="+album.pri_name+"&new_name="+album.new_name+
-                "&pri_pwd="+album.pri_pwd+"&new_pwd="+album.new_pwd,
-        "onsuccess": getAlbums
-    })
 }
 /*
  *删除相册
@@ -236,42 +227,66 @@ function delAlbum() {
 
 function showPhotos(name) {
     var last_album = document.getElementsByClassName("album_bg")[0];
-    if(last_album) {
+    var uploader = document.getElementById("wrapper");
+    uploader.style.display = "none";
+    if(last_album) {     //清除上一次选中相册的高亮背景
         removeClass(last_album,"album_bg");
     }
-    if(name === "ALL") {
+
+    var up_img = document.getElementById("up-img");   
+    //如果是展示全部图片，则相册列表-“全部”高亮，导入图片区域隐藏
+    if(name === "ALL") {   
         var pri_name = "ALL";
         var albums = document.getElementById("albums");
-        addClass(albums.getElementsByTagName("li")[0],"album_bg");
-    }else {
+        album_all = albums.getElementsByTagName("li")[0];
+        EventUtil.addHandler(album_all,"click",function() {
+            showPhotos("ALL");
+        });
+        addClass(album_all,"album_bg");
+        up_img.style.display = "none";
+    }else {     //否则，当前选中相册背景高亮，显示出导入图片按钮
         var this_album = this;
         addClass(this_album,"album_bg");
+        up_img.style.display = "block";
+
         var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
-        if( re.test(this.innerHTML) ) {
+        if( re.test(this_album.innerHTML) ) {
             var pri_name = RegExp.$1;
         }
+        
         var up_btn = document.getElementById("up-btn");
-        if(up_btn) {
-            up_btn.href = encodeURI("upload.html#"+pri_name);       
-        }
+        EventUtil.addHandler(up_btn,"click",function() {
+            this_album = document.getElementsByClassName("album_bg")[0];
+            if( re.test(this_album.innerHTML) ) {
+                var pri_name = RegExp.$1;
+            }
+            uploader.style.display = "block";
+            console.log(pri_name);
+            getToken({
+                "name": pri_name,
+                "container": this_album
+            });
+        });
     }
-
+    //重置content区域
+    var img_show = document.getElementById("img-show");
+    img_show.innerHTML = "";
     ajax("../server/getPhotos.php",{
         "type": "POST",
         "data": "name="+pri_name,
         onsuccess: function(xhr) {
             if(xhr.responseText) {
+                var fragment = document.createDocumentFragment();
                 var recive = JSON.parse(xhr.responseText);
-                var img_show = document.getElementById("img-show");
-                img_show.innerHTML = "";
                 for( var i=0;i<recive.length;i++ ) {
                     var tmp = JSON.parse(recive[i]);
                     var img_box = document.createElement("div");
                     img_box.className = "img-box";
                     img_box.innerHTML = "<img src="+tmp.src+">"+"<span class=\"item-name\">"+tmp.name+"</span>"
                                         +"<img class=\"edit-items\" src=\"../src/ellips.png\">";
-                    img_show.appendChild(img_box);
+                    fragment.appendChild(img_box);
                 }
+                img_show.appendChild(fragment);
             }
         }
     });

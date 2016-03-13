@@ -6,8 +6,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE-Edge">
 		<link rel="stylesheet" href="css/base.css">
 		<link rel="stylesheet" href="css/mPage.css">
+		<link rel="stylesheet" type="text/css" href="css/webuploader.css" />
+		<link rel="stylesheet" type="text/css" href="css/upload.css" />
 	</head>
 	<body>
+		<!--左侧导航栏start-->
 		<div class="nav">
 			<h1>图片管理器</h1>
 			<button id="add-album">添加相册</button>
@@ -20,14 +23,44 @@
 				<input id="cancel-btn" type="button" value="放弃">
 				<input id="com-btn" type="button" value="确定">
 			</div>
+			<!--相册列表-->
 			<ul id="albums">
 				<li>全部&nbsp;&nbsp;(<span id="all-num" class="num"></span>)</li>
 			</ul>
 		</div>
+		<!--左侧导航栏end--> 
+		<!--主要内容区start-->
 		<div class="content">
+			<!--图片上传按钮-->
 			<div id="up-img">
-				<a href="upload.html" id="up-btn" target="_blank">导入图片</a>
+				<button id="up-btn">导入图片</button>
 			</div>
+			<!--图片上传编辑区start-->
+			<div id="wrapper">
+		        <div id="container">
+		            <!--头部，相册选择和格式选择-->
+		            <div id="uploader">
+		                <div class="queueList">
+		                    <div id="dndArea" class="placeholder">
+		                        <div id="filePicker"></div>
+		                        <p>或将照片拖到这里，单次最多可选300张</p>
+		                    </div>
+		                </div>
+		                <div class="statusBar" style="display:none;">
+		                    <div class="progress">
+		                        <span class="text">0%</span>
+		                        <span class="percentage"></span>
+		                    </div>
+		                    <div class="info"></div>
+		                    <div class="btns">
+		                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+            <!--图片上传编辑区end-->
+            <!--删除相册弹出框-->
 			<div id="del-div">
 				<h4 class="div-head">删除相册</h4>
 				<p>删除相册是不可逆操作，确定删除该相册吗？</p>
@@ -35,9 +68,19 @@
 				<input id="del-cancel" type="button" value="放弃">
 				<input id="del-btn" type="button" value="确定">
 			</div>
+			<!--图片展示容器-->
 			<div id="img-show"></div>
 		</div>
-		<script src="js/util.js"></script>
-		<script src="js/manage.js"></script>
+		<ul id="img-deal">
+			<li id="img-edit">编辑</li>
+			<li id="img-move" class="active">挪动</li>
+			<li id="img-del">删除</li>
+		</ul>
+		<!--主要内容区end-->
+	    <script src="js/webUploader/jquery.js"></script>
+	    <script src="js/webUploader/webuploader.min.js"></script>
+	    <script src="js/webUploader/upload.js"></script>
+	    <script src="js/util.js"></script>
+	    <script src="js/manage.js"></script>
 	</body>
 </html>
