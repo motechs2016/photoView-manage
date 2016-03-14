@@ -187,24 +187,33 @@ function editAlbum() {
         });
     });
 }
-/*
- *删除相册
- */
-function delAlbum() {
-    var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
-    if( re.test(this.parentNode.innerHTML) ) {
-        var pri_name = RegExp.$1;
-    }
+
+function delDiv(dealFunction) {
     var password = document.getElementById("del-pwd");
     password.value = "";
     password.style.borderColor = "#fff";
     password.placeholder = "请输入相册管理密码";
     var del_div = document.getElementById("del-div");
     del_div.style.display = "block";
-
     var del_btn = document.getElementById("del-btn");
     var del_cancel = document.getElementById("del-cancel");
-    EventUtil.addHandler(del_btn,"click",function() {
+    EventUtil.addHandler(del_btn,"click",dealFunction);
+    EventUtil.addHandler(del_cancel,"click",function() {
+        del_div.style.display = "none";
+    });
+}
+/*
+ *删除相册及其图片,展示删除弹出框，将相册名字和输入密码传入后台进行验证
+ *后台传回"PWD_ERROR"表示密码错误，传回"INPUT_OK"表示密码正确，已执行删除操作，隐藏删除弹出框
+ */
+function delAlbum() {
+    var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
+    if( re.test(this.parentNode.innerHTML) ) {
+        var pri_name = RegExp.$1;
+    }
+    delDiv(function() {
+        var password = document.getElementById("del-pwd");
+        var del_div = document.getElementById("del-div");
         ajax("../server/updateAlbum.php",{
             "type": "POST",
             "data": "pri_name="+pri_name+"&pri_pwd="+password.value+"&type=delete",
@@ -218,13 +227,14 @@ function delAlbum() {
                     getAlbums();
                 }
             }
-        })
-    });
-    EventUtil.addHandler(del_cancel,"click",function() {
-        del_div.style.display = "none";
+        });
     });
 }
-
+/*
+ *如果传入"ALL"，表示需要展示所有图片，向后台传入"ALL"，content区域不显示导入图片按钮
+ *如果没有传入实参，则表示是产生点击事件触发的，用this获取当前对象，向后台传入相册名，显示按钮
+ *去除上一相册的背景高亮，将当前相册背景高亮，ajax向后台请求图片并展示
+ */
 function showPhotos(name) {
     var last_album = document.getElementsByClassName("album_bg")[0];
     var uploader = document.getElementById("wrapper");
@@ -256,13 +266,17 @@ function showPhotos(name) {
         
         var up_btn = document.getElementById("up-btn");
         EventUtil.addHandler(up_btn,"click",function() {
+            var del_div = document.getElementById("del-div");
+            if(del_div) {
+                del_div.style.display = "none";
+            }
             this_album = document.getElementsByClassName("album_bg")[0];
             if( re.test(this_album.innerHTML) ) {
                 var pri_name = RegExp.$1;
             }
             uploader.style.display = "block";
-            console.log(pri_name);
-            getToken({
+            console.log(pri_name);       //点击一次button为什么会输出多次？
+            getToken({           //调用upload.js，获取七牛token，创建webUploader
                 "name": pri_name,
                 "container": this_album
             });
@@ -282,12 +296,68 @@ function showPhotos(name) {
                     var tmp = JSON.parse(recive[i]);
                     var img_box = document.createElement("div");
                     img_box.className = "img-box";
-                    img_box.innerHTML = "<img src="+tmp.src+">"+"<span class=\"item-name\">"+tmp.name+"</span>"
+                    img_box.innerHTML = "<img src="+tmp.src+" name="+tmp.id+">"+"<span class=\"item-name\">"+tmp.name+"</span>"
                                         +"<img class=\"edit-items\" src=\"../src/ellips.png\">";
                     fragment.appendChild(img_box);
                 }
                 img_show.appendChild(fragment);
+                editPhoto();
             }
         }
     });
+}
+
+function editPhoto() {
+    var edit_items = document.getElementsByClassName("edit-items");
+    var edit_ul = document.getElementById("img-deal");
+
+    for(var i=0,len=edit_items.length; i<len; i++) {
+        EventUtil.addHandler(edit_items[i],"click",function(ev) {
+            EventUtil.stopProagation(ev);
+            var img_box = this.parentNode;
+            img_box.appendChild(edit_ul);
+            edit_ul.style.display = "inline-block";
+        });
+    }
+
+    if(edit_ul) {
+        var edit_list = edit_ul.getElementsByTagName("li");
+        for(var j=0;j<edit_list.length;j++) {
+            EventUtil.addHandler(edit_list[j],"mouseover",function(ev) {
+                var target = EventUtil.getTarget(ev);
+                addClass(target,"active");
+            });
+            EventUtil.addHandler(edit_list[j],"mouseout",function(ev) {
+                var target = EventUtil.getTarget(ev);
+                removeClass(target,"active");
+            });
+            EventUtil.addHandler(edit_list[j],"click",function(ev) {
+                var target = EventUtil.getTarget(ev);
+                if( target.id === "img-del" ) {
+                    var img_id = edit_ul.parentNode.getElementsByTagName("img")[0].name;
+                    delPhoto(img_id);
+                }
+            });
+        }
+        var body = document.body;
+        EventUtil.addHandler(body,"click",function(ev) {
+            var target = EventUtil.getTarget(ev);
+            if(target !== edit_ul) {
+                edit_ul.style.display = "";
+            }
+        });
+    }
+}
+
+function delPhoto(img_id) {
+    var password = document.getElementById("del-pwd");
+    delDiv(function() {
+        ajax("../server/updatePhoto.php",{
+            "type": "POST",
+            "data": "img_id="+img_id+"&password="+password.value+"&type=delete",
+            onsuccess: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });    
 }

@@ -14,6 +14,7 @@
 			$all_tmp = array(
 				'src' =>$all_row['src'],
 				'name' =>$all_row['name'],
+				'id' => $all_row['id'],
 			);
 			$all_list[]=json_encode($all_tmp);
 		}
@@ -32,6 +33,7 @@
 				$tmp = array(
 					'src' =>$row['src'],
 					'name' =>$row['name'],
+					'id' => $row['id'],
 				);	
 				$list[]=json_encode($tmp);
 			}
