@@ -204,7 +204,7 @@ function creatUploader(qiniu_token,this_album){
                     all_num = document.getElementById("all-num");
                     num_all = all_num.innerHTML.replace(/\&nbsp\;/g,'');
                     all_num.innerHTML = "&nbsp;"+(parseInt(num_all)+recive.length)+"&nbsp;"; 
-
+                    this_album.editPhoto();
                 }
             });
         })

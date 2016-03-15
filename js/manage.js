@@ -129,7 +129,7 @@ function addAlbum() {
             edit_btn.style.display = "inline";
             del_btn.style.display = "inline";
             EventUtil.addHandler(edit_btn,"click",editAlbum);
-            EventUtil.addHandler(del_btn,"click",delAlbum);
+            //EventUtil.addHandler(del_btn,"click",delAlbum);
         });
         EventUtil.addHandler(albums_list[i],"mouseout",function(ev) {
             var out_li = EventUtil.getTarget(ev);
@@ -197,8 +197,10 @@ function delDiv(dealFunction) {
     del_div.style.display = "block";
     var del_btn = document.getElementById("del-btn");
     var del_cancel = document.getElementById("del-cancel");
+
     EventUtil.addHandler(del_btn,"click",dealFunction);
     EventUtil.addHandler(del_cancel,"click",function() {
+        EventUtil.removeHandler(del_btn,"click",dealFunction);
         del_div.style.display = "none";
     });
 }
@@ -248,7 +250,7 @@ function showPhotos(name) {
     if(name === "ALL") {   
         var pri_name = "ALL";
         var albums = document.getElementById("albums");
-        album_all = albums.getElementsByTagName("li")[0];
+        album_all = albums.getElementsByTagName("li")[0];   //显示全部图片的li
         EventUtil.addHandler(album_all,"click",function() {
             showPhotos("ALL");
         });
@@ -278,7 +280,8 @@ function showPhotos(name) {
             console.log(pri_name);       //点击一次button为什么会输出多次？
             getToken({           //调用upload.js，获取七牛token，创建webUploader
                 "name": pri_name,
-                "container": this_album
+                "container": this_album,
+                "editPhoto": editPhoto
             });
         });
     }
@@ -309,8 +312,10 @@ function showPhotos(name) {
 
 function editPhoto() {
     var edit_items = document.getElementsByClassName("edit-items");
-    var edit_ul = document.getElementById("img-deal");
+    var edit_src = document.getElementById("img-deal");
 
+    //为避免再次调用showPhotos重置img_box时，edit_src会从dom中被删除，所以这里做一个拷贝
+    var edit_ul = edit_src.cloneNode(true); 
     for(var i=0,len=edit_items.length; i<len; i++) {
         EventUtil.addHandler(edit_items[i],"click",function(ev) {
             EventUtil.stopProagation(ev);
@@ -351,12 +356,20 @@ function editPhoto() {
 
 function delPhoto(img_id) {
     var password = document.getElementById("del-pwd");
+    var del_div = document.getElementById("del-div");
     delDiv(function() {
         ajax("../server/updatePhoto.php",{
             "type": "POST",
             "data": "img_id="+img_id+"&password="+password.value+"&type=delete",
             onsuccess: function(xhr) {
-                console.log(xhr.responseText);
+                if(xhr.responseText === "PWD_ERROR") {
+                    password.value = "";
+                    password.placeholder = "密码错误";
+                    password.style.borderColor = "red";
+                } else if(xhr.responseText === "INPUT_OK") {
+                    del_div.style.display = "none";
+                    getAlbums();
+                }
             }
         });
     });    

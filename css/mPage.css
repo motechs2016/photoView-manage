@@ -5,11 +5,9 @@ body {
 /*左侧导航栏start*/
 .nav {
 	width: 200px;
-	float: left;
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	overflow: auto;
 	background-color: #1e7de8;
 }
 .nav h1 {
