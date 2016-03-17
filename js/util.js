@@ -60,25 +60,19 @@ var EventUtil={
     addHandler:function(element,type,handler){
         if (element.addEventListener) {            //DOM2级方法
             element.addEventListener(type, handler);
-            console.log("dom2")
         } else if (element.attachEvent) {          //针对IE8及以下浏览器
             element.attachEvent("on" + type, handler);
-            console.log("ie7");
         }else{
             element["on"+type] = handler;            //DOM0级方法
-            console.log("dom0");
         }
     },
     removeHandler:function(element,type,handler){
-        if (element.removeEventListenr) {              //DOM2级方法
-            element.removeEventListenr(type, handler);
-            console.log("yes-dom2");
+        if (element.removeEventListener) {              //DOM2级方法
+            element.removeEventListener(type, handler);
         } else if (element.detachEvent) {              //针对IE8及以下浏览器
             element.detachEvent("on" + type, handler);
-            console.log("yes-ie7");
         }else{
             element["on"+type] = null;            //DOM0级方法
-            console.log("yeson");
         }
     },
 

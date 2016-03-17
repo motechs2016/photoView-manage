@@ -302,7 +302,7 @@ function creatUploader(qiniu_token,this_album){
                         img = $('<img src="'+src+'">');
                         $wrap.empty().append( img );
                     } else {
-                        $.ajax('../server/preview.php', {
+                        $.ajax('../../server/preview.php', {
                             method: 'POST',
                             data: src,
                             dataType:'json'

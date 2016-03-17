@@ -15,7 +15,7 @@
 		$num_query = mysqli_query($con,"SELECT * FROM album WHERE id='$album_id'");
 		$num_row = mysqli_fetch_array($num_query);
 		if($password != $num_row['pwd']) {
-			echo($password);
+			//echo($password);
 			echo("PWD_ERROR");
 			exit();
 		} else{

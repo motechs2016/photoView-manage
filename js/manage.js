@@ -129,7 +129,7 @@ function addAlbum() {
             edit_btn.style.display = "inline";
             del_btn.style.display = "inline";
             EventUtil.addHandler(edit_btn,"click",editAlbum);
-            //EventUtil.addHandler(del_btn,"click",delAlbum);
+            EventUtil.addHandler(del_btn,"click",delAlbum);
         });
         EventUtil.addHandler(albums_list[i],"mouseout",function(ev) {
             var out_li = EventUtil.getTarget(ev);
@@ -188,7 +188,17 @@ function editAlbum() {
     });
 }
 
-function delDiv(dealFunction) {
+/*
+ *删除相册及其图片,展示删除弹出框，将相册名字和输入密码传入后台进行验证
+ *后台传回"PWD_ERROR"表示密码错误，传回"INPUT_OK"表示密码正确，已执行删除操作，隐藏删除弹出框
+ */
+ var del_album;    //即将被删除的相册对象
+function delAlbum() {
+    var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
+    if( re.test(this.parentNode.innerHTML) ) {
+        del_album = RegExp.$1;
+    }
+
     var password = document.getElementById("del-pwd");
     password.value = "";
     password.style.borderColor = "#fff";
@@ -198,39 +208,29 @@ function delDiv(dealFunction) {
     var del_btn = document.getElementById("del-btn");
     var del_cancel = document.getElementById("del-cancel");
 
-    EventUtil.addHandler(del_btn,"click",dealFunction);
+    EventUtil.addHandler(del_btn,"click",albumAjax);
     EventUtil.addHandler(del_cancel,"click",function() {
-        EventUtil.removeHandler(del_btn,"click",dealFunction);
+        EventUtil.removeHandler(del_btn,"click",albumAjax);
         del_div.style.display = "none";
     });
 }
-/*
- *删除相册及其图片,展示删除弹出框，将相册名字和输入密码传入后台进行验证
- *后台传回"PWD_ERROR"表示密码错误，传回"INPUT_OK"表示密码正确，已执行删除操作，隐藏删除弹出框
- */
-function delAlbum() {
-    var re = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)&/;
-    if( re.test(this.parentNode.innerHTML) ) {
-        var pri_name = RegExp.$1;
-    }
-    delDiv(function() {
-        var password = document.getElementById("del-pwd");
-        var del_div = document.getElementById("del-div");
-        ajax("../server/updateAlbum.php",{
-            "type": "POST",
-            "data": "pri_name="+pri_name+"&pri_pwd="+password.value+"&type=delete",
-            onsuccess: function(xhr) {
-                if(xhr.responseText === "PWD_ERROR") {
-                    password.value = "";
-                    password.placeholder = "密码错误";
-                    password.style.borderColor = "red";
-                } else if(xhr.responseText === "INPUT_OK") {
-                    del_div.style.display = "none";
-                    getAlbums();
-                }
+function albumAjax() {
+    var password = document.getElementById("del-pwd");
+    var del_div = document.getElementById("del-div");
+    ajax("../server/updateAlbum.php",{
+        "type": "POST",
+        "data": "pri_name="+del_album+"&pri_pwd="+password.value+"&type=delete",
+        onsuccess: function(xhr) {
+            if(xhr.responseText === "PWD_ERROR") {
+                password.value = "";
+                password.placeholder = "密码错误";
+                password.style.borderColor = "red";
+            } else if(xhr.responseText === "INPUT_OK") {
+                del_div.style.display = "none";
+                getAlbums();
             }
-        });
-    });
+        }
+    });    
 }
 /*
  *如果传入"ALL"，表示需要展示所有图片，向后台传入"ALL"，content区域不显示导入图片按钮
@@ -353,24 +353,40 @@ function editPhoto() {
         });
     }
 }
-
+var del_img;         //即将被删除的图片id
 function delPhoto(img_id) {
+    del_img = img_id;
+    var password = document.getElementById("del-pwd");
+    password.value = "";
+    password.style.borderColor = "#fff";
+    password.placeholder = "请输入相册管理密码";
+    var del_div = document.getElementById("del-div");
+    del_div.style.display = "block";
+    var del_btn = document.getElementById("del-btn");
+    var del_cancel = document.getElementById("del-cancel");
+
+    EventUtil.addHandler(del_btn,"click",imgAjax);
+    EventUtil.addHandler(del_cancel,"click",function() {
+        EventUtil.removeHandler(del_btn,"click",imgAjax);
+        del_div.style.display = "none";
+    });
+}
+
+function imgAjax() {
     var password = document.getElementById("del-pwd");
     var del_div = document.getElementById("del-div");
-    delDiv(function() {
-        ajax("../server/updatePhoto.php",{
-            "type": "POST",
-            "data": "img_id="+img_id+"&password="+password.value+"&type=delete",
-            onsuccess: function(xhr) {
-                if(xhr.responseText === "PWD_ERROR") {
-                    password.value = "";
-                    password.placeholder = "密码错误";
-                    password.style.borderColor = "red";
-                } else if(xhr.responseText === "INPUT_OK") {
-                    del_div.style.display = "none";
-                    getAlbums();
-                }
+    ajax("../server/updatePhoto.php",{
+        "type": "POST",
+        "data": "img_id="+del_img+"&password="+password.value+"&type=delete",
+        onsuccess: function(xhr) {
+            if(xhr.responseText === "PWD_ERROR") {
+                password.value = "";
+                password.placeholder = "密码错误";
+                password.style.borderColor = "red";
+            } else if(xhr.responseText === "INPUT_OK") {
+                del_div.style.display = "none";
+                getAlbums();
             }
-        });
-    });    
+        }
+    });
 }
