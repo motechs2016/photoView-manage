@@ -364,7 +364,8 @@ function delPhoto(img_id) {
     del_div.style.display = "block";
     var del_btn = document.getElementById("del-btn");
     var del_cancel = document.getElementById("del-cancel");
-
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0; //将视角拉到弹出框
     EventUtil.addHandler(del_btn,"click",imgAjax);
     EventUtil.addHandler(del_cancel,"click",function() {
         EventUtil.removeHandler(del_btn,"click",imgAjax);

@@ -1,4 +1,5 @@
 window.onload = function() {
+	getType();
 	getPhotos("ALL");
 	EventUtil.addHandler(document,"scroll",function() {
 		if(checkDown()) {
@@ -10,6 +11,26 @@ window.onload = function() {
 			insertImg(num,deal_num);
 		};
 	});
+}
+/*
+ *用ajax向后台请求相册数据并显示在导航栏
+ */
+function getType() {
+	ajax("../server/getAlbum.php",{
+		onsuccess: function(xhr) {
+			var albums = JSON.parse(xhr.responseText);
+			var fragment = document.createDocumentFragment();
+			for(var i=0;i<albums.length;i++) {
+				var album = JSON.parse(albums[i]);
+				var album_li = document.createElement("li");
+				album_li.innerHTML = album.name+"<span></span>";
+				fragment.appendChild(album_li);
+			}
+			var type_lists = document.getElementById("type-list");
+			type_lists.appendChild(fragment);
+			showByType();
+		}
+	})
 }
 var img_data;   //存放图片信息的json数组
 var first_screen = 15;      //首屏加载图片的数量
@@ -23,7 +44,8 @@ function getPhotos(type) {
 		"data": "name="+type,
 		onsuccess: function(xhr) {
 			img_data = JSON.parse(xhr.responseText);
-			insertImg(0,first_screen);
+			var num = (first_screen>img_data.length)?img_data.length:first_screen;
+			insertImg(0,num);
 		}
 	});
 }
@@ -41,7 +63,7 @@ function insertImg(first,num) {
 		fragment.appendChild(img_box);
 	}
 	img_show.appendChild(fragment);
-	waterFall();
+	setTimeout(waterFall,10);     //防止图片没有加载完，布局函数中出错
 }
 /*
  *布局函数，规定列数为三列，用数组hArr记录每一列的总高度
@@ -53,6 +75,7 @@ function waterFall() {
 	var hArr = [];
 	for(var i=0,len=img_boxes.length;i<len;i++) {
 		if( i<3 ) {
+			console.log(img_boxes[i].clientHeight);
 			hArr.push(img_boxes[i].offsetHeight);
 		} else {
 			var minHeight = Math.min.apply(null,hArr);
@@ -72,12 +95,46 @@ function getIndex(arr,num) {
 	}
 }
 /*
- *判断是否应该加载新的图片，如果滑动滚轮的距离+可视区的高度>=页面高度则返回true 	
+ *判断是否应该加载新的图片，如果滚动条的距离+可视区的高度>=页面高度则返回true 	
  */
 function checkDown() {
+	//滚动条的距离
 	var oScroll = document.documentElement.scrollTop || document.body.scrollTop;
+	//页面高度
 	var oHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+	//可视区的高度
 	var vHeight = document.documentElement.clientHeight || document.body.clientHeight;
+	console.log(Math.floor(oScroll),oHeight,vHeight);
+	return (Math.ceil(oScroll) + vHeight >= oHeight) ? true:false
+}
+/*
+ *点击导航栏的分类，按照分类用ajax向后台请求相应的数据，然后显示在内容区
+ */
+function showByType() {
+	var type_ul = document.getElementById("type-list");
+	var type_lists = type_ul.getElementsByTagName("li");
+	for(var i=0,len=type_lists.length;i<len;i++) {
+		EventUtil.addHandler(type_lists[i],"click",function(ev) {
+			var click_target = EventUtil.getTarget(ev);
+			//确定目标元素为li而不是其子节点，否则后面添加active类时会出错
+			if(click_target.nodeName.toLowerCase() !== "li") {
+				click_target = click_target.parentNode;
+			}
+			var prev_active = document.getElementsByClassName("active");			
+			removeClass(prev_active[0],"active");
+			addClass(click_target,"active");
 
-	return (oScroll + vHeight >= oHeight) ? true:false
+			var re_name = /(^[\u4E00-\u9FA5\uF900-\uFA2D]+|\w+)</;
+			if(re_name.test(click_target.innerHTML)) {
+				var type_name = RegExp.$1;    //所点击的类的名字
+				var img_show = document.getElementById("img-show");
+				img_show.innerHTML = "";
+				if(type_name === "全部") {
+					getPhotos("ALL");
+				}else {
+					getPhotos(type_name);
+				}
+			}
+		});
+	}
 }

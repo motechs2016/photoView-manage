@@ -5,7 +5,7 @@ body {
 /*左侧导航栏start*/
 .nav {
 	width: 200px;
-	position: absolute;
+	position: fixed;
 	top: 0;
 	bottom: 0;
 	background-color: #1e7de8;
@@ -140,10 +140,6 @@ body {
 /*右侧内容区start*/
 .content {
 	margin-left: 200px;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	overflow: auto;
 	padding: 20px;
 }
 #up-img {
