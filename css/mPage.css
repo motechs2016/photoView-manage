@@ -19,6 +19,21 @@ body {
 	text-align: center;
 	background-color: #164784;
 }
+#preview {
+	display: inline-block;
+	width: 80px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	text-decoration: none;
+	color: #fff;
+	background-color: #f7ae12;
+	border: 1px solid #f7ae12;
+	border-radius: 5px;
+	position: absolute;
+	bottom: 30px;
+	margin-left: 60px;
+}
 #add-album {
 	width: 70%;
 	height: 36px;
