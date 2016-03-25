@@ -56,14 +56,25 @@ function getPhotos(type) {
 function insertImg(first,num) {
 	var img_show = document.getElementById("img-show");
 	var fragment = document.createDocumentFragment();
+	var new_img = new Image();
 	for(var i=first;i<first+num;i++) {
 		var tmp = JSON.parse(img_data[i]);
 		var img_box = document.createElement("img");
 		img_box.src = tmp.src;
+		new_img.src = tmp.src;
 		fragment.appendChild(img_box);
+		if(i%3===0 ) {
+			console.log("water");
+			waterFall();
+		}
 	}
 	img_show.appendChild(fragment);
-	setTimeout(waterFall,10);     //防止图片没有加载完，布局函数中出错
+
+	/*if(new_img.complete) {
+		waterFall();
+	}*/
+	waterFall();
+	//setTimeout(waterFall,10);     //防止图片没有加载完，布局函数中出错
 }
 /*
  *布局函数，规定列数为三列，用数组hArr记录每一列的总高度
@@ -71,13 +82,14 @@ function insertImg(first,num) {
  */
 function waterFall() {
 	var main_box = document.getElementById("img-show");
-	var img_boxes = main_box.getElementsByTagName("img");
+	var img_boxes = main_box.getElementsByTagName("img"); //图片集合
 	var hArr = [];
 	for(var i=0,len=img_boxes.length;i<len;i++) {
 		if( i<3 ) {
-			console.log(img_boxes[i].clientHeight);
+			console.log(i,img_boxes[i].width);
 			hArr.push(img_boxes[i].offsetHeight);
 		} else {
+			console.log(i,img_boxes[i].clientHeight);
 			var minHeight = Math.min.apply(null,hArr);
 			var minIndex = getIndex(hArr,minHeight);
 			img_boxes[i].style.position = "absolute";
@@ -104,7 +116,7 @@ function checkDown() {
 	var oHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
 	//可视区的高度
 	var vHeight = document.documentElement.clientHeight || document.body.clientHeight;
-	console.log(Math.floor(oScroll),oHeight,vHeight);
+
 	return (Math.ceil(oScroll) + vHeight >= oHeight) ? true:false
 }
 /*

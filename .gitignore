@@ -1,2 +1,4 @@
 ﻿*~
 *[oa]
+server/config.php
+*.sql
