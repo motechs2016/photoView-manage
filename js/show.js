@@ -2,13 +2,16 @@ window.onload = function() {
 	getType();
 	getPhotos("ALL");
 	EventUtil.addHandler(document,"scroll",function() {
+		//判断是否满足加载图片的条件
 		if(checkDown()) {
 			var img_show = document.getElementById("img-show");
 			var img_boxes = img_show.getElementsByTagName("img");
 			var num = img_boxes.length;
 			var leave_num = img_data.length-num;
-			var deal_num = (leave_num>10) ? 10 : leave_num;
-			insertImg(num,deal_num);
+			if(leave_num>0) {
+				var deal_num = (leave_num>10) ? 10 : leave_num;
+				insertImg(num,deal_num);
+			}
 		};
 	});
 }
@@ -51,53 +54,62 @@ function getPhotos(type) {
 }
 /*
  *first:起始图片的img_data中的位置。num:要加载的图片数量
- *将想要加载的图片加入到img_show的dom结构中，然后调用布局函数
+ *图片加载完成之后，调用回调函数afterLoad
  */
-function insertImg(first,num) {
-	var img_show = document.getElementById("img-show");
-	var fragment = document.createDocumentFragment();
-	var new_img = new Image();
+function insertImg(first,num) {	
 	for(var i=first;i<first+num;i++) {
 		var tmp = JSON.parse(img_data[i]);
-		var img_box = document.createElement("img");
-		img_box.src = tmp.src;
+		var new_img = new Image();
 		new_img.src = tmp.src;
-		fragment.appendChild(img_box);
-		if(i%3===0 ) {
-			console.log("water");
-			waterFall();
-		}
+		EventUtil.addHandler(new_img,"load",afterLoad);
 	}
-	img_show.appendChild(fragment);
+}
 
-	/*if(new_img.complete) {
-		waterFall();
-	}*/
-	waterFall();
-	//setTimeout(waterFall,10);     //防止图片没有加载完，布局函数中出错
+/*
+ *回调函数将调用waterFall的闭包函数并删除该图片的事件处理程序
+ */
+var waterImg = waterFall();
+function afterLoad() {
+	waterImg(this);
+	EventUtil.removeHandler(this,"load",afterLoad);
 }
 /*
+ *img_fragment；新添加图片的文档片段。count：文档片段中图片数量
  *布局函数，规定列数为三列，用数组hArr记录每一列的总高度
- *如果不是第一行的三张图片，则需找到高度最小的列，将当前图片置于其下方，并修改数组
+ *包含一个闭包，用来改变count和img_fragment,并将文档片段添加到dom
  */
+var hArr = [];
 function waterFall() {
 	var main_box = document.getElementById("img-show");
-	var img_boxes = main_box.getElementsByTagName("img"); //图片集合
-	var hArr = [];
-	for(var i=0,len=img_boxes.length;i<len;i++) {
-		if( i<3 ) {
-			console.log(i,img_boxes[i].width);
-			hArr.push(img_boxes[i].offsetHeight);
+	var img_boxes = main_box.getElementsByTagName("img");
+	var img_fragment = document.createDocumentFragment();
+	var count = 0;
+	return function(img) {
+		count++;
+		var new_img = document.createElement("img");
+		new_img.src = img.src;
+		var img_height = img.height*294/img.width;
+		//前三张图片
+		if(hArr.length < 3) {
+			hArr.push(img_height+6);
+			img_fragment.appendChild(new_img);
 		} else {
-			console.log(i,img_boxes[i].clientHeight);
 			var minHeight = Math.min.apply(null,hArr);
 			var minIndex = getIndex(hArr,minHeight);
-			img_boxes[i].style.position = "absolute";
-			img_boxes[i].style.top = minHeight+"px";
-			img_boxes[i].style.left = img_boxes[minIndex].offsetLeft+"px";
-			hArr[minIndex] += img_boxes[i].clientHeight;
+			new_img.style.position = "absolute";
+			new_img.style.top = minHeight+"px";
+			new_img.style.left = img_boxes[minIndex].offsetLeft+"px";
+			img_fragment.appendChild(new_img);
+			hArr[minIndex] += (img_height+6);	
 		}
-	} 
+		//如果文档片段里包含3张图片
+		//或者图片数据img_data已经没有剩下的图片时将片段添加到dom
+		if(count===3 || (img_data.length-img_boxes.length)===count) {
+			count = 0;
+			main_box.appendChild(img_fragment);
+			img_fragment = document.createDocumentFragment();
+		}
+	}
 }
 function getIndex(arr,num) {
 	for(var i=0;i<arr.length;i++) {
@@ -141,6 +153,7 @@ function showByType() {
 				var type_name = RegExp.$1;    //所点击的类的名字
 				var img_show = document.getElementById("img-show");
 				img_show.innerHTML = "";
+				hArr = [];
 				if(type_name === "全部") {
 					getPhotos("ALL");
 				}else {
