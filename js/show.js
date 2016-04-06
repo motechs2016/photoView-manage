@@ -95,7 +95,7 @@ function waterFall() {
 			img_fragment.appendChild(new_img);
 		} else {
 			var minHeight = Math.min.apply(null,hArr);
-			var minIndex = getIndex(hArr,minHeight);
+			var minIndex = hArr.indexOf(minHeight);
 			new_img.style.position = "absolute";
 			new_img.style.top = minHeight+"px";
 			new_img.style.left = img_boxes[minIndex].offsetLeft+"px";
@@ -108,13 +108,6 @@ function waterFall() {
 			count = 0;
 			main_box.appendChild(img_fragment);
 			img_fragment = document.createDocumentFragment();
-		}
-	}
-}
-function getIndex(arr,num) {
-	for(var i=0;i<arr.length;i++) {
-		if(arr[i] === num) {
-			return i;
 		}
 	}
 }
